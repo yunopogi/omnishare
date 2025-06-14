@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Omnishare - File Sharing</title>
+  <link rel="stylesheet" href="design.css">
+</head>
+<body>
+  <!-- Auth Section -->
+  <div id="authSection">
+    <h1 class="brand">Omnishare</h1>
+    <div class="container active-form">
+      <div class="tab-buttons">
+        <button id="loginTab" onclick="showForm('login')">Login</button>
+        <button id="registerTab" onclick="showForm('register')">Register</button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" class="form" onsubmit="login(event)">
+        <h2>Login</h2>
+        <input type="text" name="username_or_email" placeholder="Email or Username" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <label><input type="checkbox"> Remember me</label>
+        <button type="submit">Login</button>
+        <p>Don't have an account? <a href="#" onclick="showForm('register')">Sign Up</a></p>
+      </form>
+
+      <!-- Register Form -->
+      <form id="registerForm" class="form hidden" onsubmit="register(event)">
+        <h2>Register</h2>
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <input type="password" id="confirmPassword" name="confirm_password" placeholder="Confirm Password" required>
+        <label><input type="checkbox" required> I accept the terms & conditions</label>
+        <label><input type="checkbox" onclick="togglePassword()"> Show Passwords</label>
+        <button type="submit">Register</button>
+        <p>Already have an account? <a href="#" onclick="showForm('login')">Login</a></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- File Upload Section -->
+  <div id="fileSection" class="hidden">
+    <div class="container">
+      <h1 class="brand">Omnishare</h1>
+      <section class="upload-section">
+        <h2>Upload a file to share</h2>
+        <label for="expiry">Set file expiry:</label>
+        <select id="expiry">
+          <option value="15">15 minutes</option>
+          <option value="60">1 hour</option>
+          <option value="1440">1 day</option>
+        </select>
+
+        <div class="upload-box" onclick="document.getElementById('fileInput').click();">
+          Drag & drop files here or click to upload
+          <input type="file" id="fileInput" hidden />
+        </div>
+
+        <div class="link-container" id="linkContainer" style="display: none;">
+          <input type="text" id="fileLink" readonly value="https://omnishare.app/share/example" />
+          <button onclick="copyLink()">Copy</button>
+        </div>
+        <p class="success-message" id="uploadMessage">File uploaded successfully!</p>
+      </section>
+
+      <hr />
+
+      <section class="download-section">
+        <h2>Download a shared file</h2>
+        <input type="text" id="downloadLink" value="https://omnishare.app/share/zszreAop6" />
+        <button onclick="downloadFile()">Download</button>
+
+        <div class="file-details">
+          <p><strong>File Name:</strong> example-file.txt</p>
+          <p><strong>File Size:</strong> 1.2 MB</p>
+          <p><strong>Expires In:</strong> Expires in 15 minutes</p>
+        </div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </section>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    function showForm(form) {
+      const loginForm = document.getElementById("loginForm");
+      const registerForm = document.getElementById("registerForm");
+      const loginTab = document.getElementById("loginTab");
+      const registerTab = document.getElementById("registerTab");
+      const container = document.querySelector(".container");
+
+      loginForm.classList.add("hidden");
+      registerForm.classList.add("hidden");
+      loginTab.classList.remove("active");
+      registerTab.classList.remove("active");
+      container.classList.remove("active-form");
+
+      if (form === "login") {
+        loginForm.classList.remove("hidden");
+        loginTab.classList.add("active");
+      } else {
+        registerForm.classList.remove("hidden");
+        registerTab.classList.add("active");
+      }
+
+      container.classList.add("active-form");
+    }
+
+    function login(event) {
+      event.preventDefault();
+      const username = document.querySelector('input[name="username_or_email"]').value;
+      const password = document.querySelector('input[name="password"]').value;
+
+      const formData = new FormData();
+      formData.append("username_or_email", username);
+      formData.append("password", password);
+
+      fetch("http://localhost/omnishare/login.php", {
+        method: "POST",
+        body: formData,
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById('authSection').classList.add('hidden');
+          document.getElementById('fileSection').classList.remove('hidden');
+        } else {
+          alert(data.message || "Invalid credentials");
+        }
+      })
+      .catch(err => {
+        console.error("Login error:", err);
+        alert("Something went wrong during login.");
+      });
+    }
+
+   function register(event) {
+  event.preventDefault();
+
+  const username = document.querySelector('#registerForm input[name="username"]').value;
+  const email = document.querySelector('#registerForm input[name="email"]').value;
+
+  // 🛠️ Use scoped selectors to avoid Login inputs being selected
+  const password = document.querySelector('#registerForm input[name="password"]').value;
+  const confirmPassword = document.querySelector('#registerForm input[name="confirm_password"]').value;
+
+  if (password !== confirmPassword) {
+    alert("Passwords do not match!");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("username", username);
+  formData.append("email", email);
+  formData.append("password", password);
+
+  fetch("http://localhost/omnishare/register.php", {
+    method: "POST",
+    body: formData,
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert("Registered successfully! Please log in.");
+        showForm('login');
+      } else {
+        alert(data.message || "Registration failed");
+      }
+    })
+    .catch(err => {
+      console.error("Registration error:", err);
+      alert("Something went wrong during registration.");
+    });
+}
+
+
+    function logout() {
+      document.getElementById('fileSection').classList.add('hidden');
+      document.getElementById('authSection').classList.remove('hidden');
+      showForm('login');
+    }
+
+    function togglePassword() {
+      const pw1 = document.querySelector('input[name="password"]');
+      const pw2 = document.getElementById('confirmPassword');
+      const type = pw1.type === 'password' ? 'text' : 'password';
+      pw1.type = pw2.type = type;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const fileInput = document.getElementById('fileInput');
+      if (fileInput) {
+        fileInput.addEventListener('change', function () {
+          const file = this.files[0];
+          if (file) {
+            document.getElementById('linkContainer').style.display = 'flex';
+            document.getElementById('uploadMessage').style.display = 'block';
+          }
+        });
+      }
+
+      showForm('login');
+    });
+
+    function copyLink() {
+      const input = document.getElementById('fileLink');
+      input.select();
+      input.setSelectionRange(0, 99999);
+      document.execCommand('copy');
+      alert("Link copied to clipboard!");
+    }
+
+    function downloadFile() {
+      alert("Download started!");
+    }
+  </script>
+</body>
+</html>

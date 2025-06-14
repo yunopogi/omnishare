@@ -1,0 +1,8 @@
+# Prevent direct listing of files
+Options -Indexes
+
+# Allow download but deny script execution
+<FilesMatch "\.(php|pl|py|jsp|asp|sh|cgi)$">
+  Order Allow,Deny
+  Deny from all
+</FilesMatch>
