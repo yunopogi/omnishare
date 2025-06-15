@@ -157,3 +157,58 @@ User found: Array
     [created_at] => 2025-06-11 16:15:47
 )
 
+Input: jrgmjamesrickson@gmail.com
+Password: james
+User found: 
+Input: james
+Password: jamesjames
+User found: Array
+(
+    [id] => 1
+    [username] => james
+    [email] => rjamesrickson@gmail.com
+    [password_hash] => $2y$10$puH6vPW2C2KiNPP6rb9dgOAwiFBlvqZoYCFcYY7lFGzeP71noRbhu
+    [terms_accepted] => 1
+    [created_at] => 2025-06-14 15:08:29
+)
+
+Input: jrgmjamesrickson@gmail.com
+Password: jamesjames
+Input: jrgmjamesrickson@gmail.com
+Password: jamesjames
+Input: james
+Password: jamesjames
+Input: james
+Password: jamesjames
+Input: james
+Password: jamesjames
+Input: jrgmjamesrickson@gmail.com
+Password: jamesjames
+User found: 
+Input: jrgmjamesrickson@gmail.com
+Password: jamesjames
+User found: 
+Input: rjamesrickson@gmail.com
+Password: jamesjames
+User found: Array
+(
+    [id] => 1
+    [username] => james
+    [email] => rjamesrickson@gmail.com
+    [password_hash] => $2y$10$puH6vPW2C2KiNPP6rb9dgOAwiFBlvqZoYCFcYY7lFGzeP71noRbhu
+    [terms_accepted] => 1
+    [created_at] => 2025-06-14 15:08:29
+)
+
+Input: admin
+Password: adminadmin
+User found: Array
+(
+    [id] => 4
+    [username] => admin
+    [email] => admin@gmail.com
+    [password_hash] => $2y$10$9TUUSaq5b6VyH5smGuYo1uDtcKUEUUudMWV6TSpSPDrS8NDEIlqXq
+    [terms_accepted] => 1
+    [created_at] => 2025-06-15 14:29:05
+)
+

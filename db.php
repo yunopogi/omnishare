@@ -1,13 +1,13 @@
 <?php
-$host = 'localhost';
-$dbname = 'omnishare_db';
-$user = 'root'; // Change this if you set a different MySQL username
-$pass = '';     // And change this if you set a password
+$host = "localhost";
+$dbname = "omnishare_db";
+$username = "root";
+$password = "";
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass);
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    die("DB Connection failed: " . $e->getMessage());
+    die("Connection failed: " . $e->getMessage());
 }
 ?>
